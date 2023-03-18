@@ -74,6 +74,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("simplyHotel - Tela de Cadastro");
         setBackground(new java.awt.Color(228, 226, 210));
         setResizable(false);
 

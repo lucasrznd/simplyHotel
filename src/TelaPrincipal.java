@@ -1,4 +1,9 @@
-
+import java.time.Month;
+import java.time.Period;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JFrame;
@@ -62,12 +67,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         buttonCalcular = new javax.swing.JButton();
         labelDiaria = new javax.swing.JLabel();
         labelVTotal = new javax.swing.JLabel();
-        labelVParcial = new javax.swing.JLabel();
         buttonSair = new javax.swing.JButton();
         buttonResetar = new javax.swing.JButton();
-        buttonDeletar = new javax.swing.JButton();
         txtDiaria = new javax.swing.JTextField();
-        txtQtdDias = new javax.swing.JTextField();
         txtVTotal = new javax.swing.JTextField();
         txtNumeroQuarto = new javax.swing.JTextField();
         txtTipoQuarto = new javax.swing.JComboBox<>();
@@ -120,6 +122,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
         labelCheckin.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelCheckin.setText("Data Check-In");
 
+        txtCheckin.setDateFormatString("dd/MM/yyyy");
+
+        txtDataN.setDateFormatString("dd/MM/yyyy");
+
         labelDataN.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelDataN.setText("Data de nascimento");
 
@@ -130,13 +136,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "Nome", "Sobrenome", "Endereço ", "CEP", "Celular", "E-mail", "Nacionalidade", "Data de Nascimento", "Tipo Documento", "Gênero", "Check-In", "Check-Out", "Tipo de Quarto", "Num. Quarto"
+                "Nome", "Sobrenome", "Endereço ", "CEP", "Celular", "E-mail", "Nacionalidade", "Data de Nascimento", "Gênero", "Check-In", "Check-Out", "Tipo de Quarto", "Num. Quarto", "Valor Total R$"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -158,9 +161,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         labelNumeroQuarto.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelNumeroQuarto.setText("Número do Quarto");
 
+        txtCheckout.setDateFormatString("dd/MM/yyyy");
+
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        buttonCalcular.setText("Calcular");
+        buttonCalcular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cadastrar.png"))); // NOI18N
+        buttonCalcular.setText("Adicionar | Calcular");
         buttonCalcular.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         buttonCalcular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,14 +175,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
 
         labelDiaria.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        labelDiaria.setText("Diária");
+        labelDiaria.setText("Valor Diária - R$");
 
         labelVTotal.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelVTotal.setText("Valor Total - R$");
 
-        labelVParcial.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        labelVParcial.setText("Quantidade dias");
-
+        buttonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/sair.png"))); // NOI18N
         buttonSair.setText("Sair");
         buttonSair.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         buttonSair.addActionListener(new java.awt.event.ActionListener() {
@@ -185,6 +189,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        buttonResetar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reset.png"))); // NOI18N
         buttonResetar.setText("Resetar");
         buttonResetar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         buttonResetar.addActionListener(new java.awt.event.ActionListener() {
@@ -193,64 +198,55 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        buttonDeletar.setText("Deletar");
-        buttonDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        buttonDeletar.addActionListener(new java.awt.event.ActionListener() {
+        txtDiaria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonDeletarActionPerformed(evt);
+                txtDiariaActionPerformed(evt);
             }
         });
+
+        txtVTotal.setEditable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(labelVTotal)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtVTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelVParcial)
-                            .addComponent(labelDiaria, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(25, 25, 25)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtQtdDias, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDiaria, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(89, 89, 89)
-                .addComponent(buttonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82)
-                .addComponent(buttonResetar, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(75, 75, 75)
-                .addComponent(buttonDeletar, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(71, 71, 71)
-                .addComponent(buttonSair, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(labelDiaria)
+                    .addComponent(labelVTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(85, 85, 85)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtDiaria, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtVTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(90, 90, 90)
+                .addComponent(buttonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(90, 90, 90)
+                .addComponent(buttonResetar, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(90, 90, 90)
+                .addComponent(buttonSair, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelDiaria)
-                    .addComponent(txtDiaria, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelVParcial)
-                    .addComponent(txtQtdDias, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonResetar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonDeletar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonSair, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelVTotal)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtVTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                        .addGap(15, 15, 15))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelDiaria)
+                            .addComponent(txtDiaria, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(25, 25, 25)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(labelVTotal)
+                            .addComponent(txtVTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE))
+                        .addContainerGap(30, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(buttonSair, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(buttonResetar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(buttonCalcular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(30, 30, 30))))
         );
 
         txtTipoQuarto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Individual", "Casal", "Familiar", "Presencial" }));
@@ -262,51 +258,48 @@ public class TelaPrincipal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(labelNumeroQuarto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelTipoQuarto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelCheckout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelDataN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelNacionalidade, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelCelular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelCep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelSobrenome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(labelNumeroQuarto)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtNumeroQuarto, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(labelTipoQuarto, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtTipoQuarto, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(labelCheckout)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(labelNome)
-                                    .addComponent(labelSobrenome)
-                                    .addComponent(labelEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(labelCep, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(labelCelular, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(labelNacionalidade)
-                                    .addComponent(labelDataN)
-                                    .addComponent(labelGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(labelCheckin, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(55, 55, 55)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCelular)
-                                    .addComponent(txtCep)
-                                    .addComponent(txtNome)
-                                    .addComponent(txtSobrenome)
-                                    .addComponent(txtEndereco)
-                                    .addComponent(txtEmail)
-                                    .addComponent(txtNacionalidade, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                                    .addComponent(txtDataN, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                                    .addComponent(txtGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addGap(15, 15, 15)
-                        .addComponent(jScrollPane1))))
-            .addComponent(jLabel1)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtCelular)
+                                .addComponent(txtCep)
+                                .addComponent(txtNome)
+                                .addComponent(txtSobrenome)
+                                .addComponent(txtEndereco)
+                                .addComponent(txtEmail)
+                                .addComponent(txtNacionalidade, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
+                                .addComponent(txtDataN, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                                .addComponent(txtGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtCheckout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtTipoQuarto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNumeroQuarto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addComponent(jScrollPane1))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -380,14 +373,30 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCalcularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCalcularActionPerformed
-
-        int diaria = Integer.parseInt(txtDiaria.getText());
-        int qtddias = Integer.parseInt(txtQtdDias.getText());
         
-        int valortotal = diaria * qtddias;
+        // Faz o Cálculo do Dia do Check-In e Check-out e dá o Valor Total //
         
-        txtVTotal.setText(Integer.toString(valortotal));
+         try {  
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                        Date firstDate = txtCheckin.getDate();
+                        Date secondDate = txtCheckout.getDate();
 
+                        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+                        long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+                       txtVTotal.setText(String.valueOf(diff));
+                       
+                       int qtdDias = (int) diff;
+                       int diaria = Integer.parseInt(txtDiaria.getText());
+                       int valortotal = diaria * qtdDias;
+                       txtVTotal.setText(Integer.toString(valortotal));
+
+            } catch (Exception e) {
+             e.printStackTrace();
+            }
+               
+
+        // Preenche na tabela com os campos digitados //
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[] {    
         txtNome.getText(),
@@ -403,9 +412,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtCheckout.getDate(),
         txtTipoQuarto.getSelectedItem(),
         txtNumeroQuarto.getText(),
-        txtDiaria.getText(),
-        txtQtdDias.getText(),
-        txtVTotal.getText(), });
+        txtVTotal.getText() });
         
         
     }//GEN-LAST:event_buttonCalcularActionPerformed
@@ -414,6 +421,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private JFrame frame;
     private void buttonSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSairActionPerformed
         
+        // Cria a ação do botão sair
         frame = new JFrame("Sair");
         
         if(JOptionPane.showConfirmDialog(frame, "Você realmente quer sair?", "Simply Hotel", 
@@ -423,21 +431,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         
     }//GEN-LAST:event_buttonSairActionPerformed
 
-    private void buttonDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeletarActionPerformed
-        
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        
-        if(jTable1.getSelectedRow() == -1) {
-            if(jTable1.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(null, "Atualização de cadastro confirmada", "Simply Hotel",
-                        JOptionPane.OK_OPTION);
-            }
-        }
-        
-    }//GEN-LAST:event_buttonDeletarActionPerformed
-
     private void buttonResetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonResetarActionPerformed
        
+        // Reseta todos os dados dos text's Fields e tabelas
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
         
@@ -455,7 +451,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtTipoQuarto.setSelectedIndex(0);
         txtNumeroQuarto.setText(null);
         txtDiaria.setText(null);
-        txtQtdDias.setText(null);
         txtVTotal.setText(null);
         
     }//GEN-LAST:event_buttonResetarActionPerformed
@@ -471,6 +466,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void txtNacionalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNacionalidadeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNacionalidadeActionPerformed
+
+    private void txtDiariaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiariaActionPerformed
+
+    }//GEN-LAST:event_txtDiariaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -509,7 +508,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCalcular;
-    private javax.swing.JButton buttonDeletar;
     private javax.swing.JButton buttonResetar;
     private javax.swing.JButton buttonSair;
     private javax.swing.JLabel jLabel1;
@@ -530,7 +528,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel labelNumeroQuarto;
     private javax.swing.JLabel labelSobrenome;
     private javax.swing.JLabel labelTipoQuarto;
-    private javax.swing.JLabel labelVParcial;
     private javax.swing.JLabel labelVTotal;
     private javax.swing.JTextField txtCelular;
     private javax.swing.JTextField txtCep;
@@ -544,7 +541,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private com.toedter.components.JLocaleChooser txtNacionalidade;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtNumeroQuarto;
-    private javax.swing.JTextField txtQtdDias;
     private javax.swing.JTextField txtSobrenome;
     private javax.swing.JComboBox<String> txtTipoQuarto;
     private javax.swing.JTextField txtVTotal;

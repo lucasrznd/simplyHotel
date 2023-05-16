@@ -1,10 +1,16 @@
+package view;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
 
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  *
@@ -17,6 +23,9 @@ public class TelaLogin extends javax.swing.JFrame {
      */
     public TelaLogin() {
         initComponents();
+        
+        Image icon = new ImageIcon(this.getClass().getResource("/images/icone-simplyHotel.png")).getImage();
+        this.setIconImage(icon);
     }
 
     /**
@@ -44,7 +53,7 @@ public class TelaLogin extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(240, 240, 236));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\LucasPC\\Desktop\\Imagens\\logohotel1.png")); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logohotel1.png"))); // NOI18N
 
         labelUsuario.setText("Usuário:");
 
@@ -80,6 +89,11 @@ public class TelaLogin extends javax.swing.JFrame {
         pfSenha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pfSenhaActionPerformed(evt);
+            }
+        });
+        pfSenha.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                pfSenhaKeyPressed(evt);
             }
         });
 
@@ -142,6 +156,7 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private void buttonEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEntrarActionPerformed
         
+        // Realiza a ação de entrar quando o botão é pressionado //
         getRootPane().setDefaultButton(buttonEntrar);
         String usuario = textUsuario.getText();
         String senha = pfSenha.getText();
@@ -161,12 +176,15 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private void buttonSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSairActionPerformed
         
+        // Realiza a ação de sair e fechar todas as telas //
         System.exit(0);
         
     }//GEN-LAST:event_buttonSairActionPerformed
 
     private void pfSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pfSenhaActionPerformed
-        // TODO add your handling code here:
+        
+        
+        
     }//GEN-LAST:event_pfSenhaActionPerformed
 
     private void textUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textUsuarioActionPerformed
@@ -176,8 +194,32 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private void textUsuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textUsuarioKeyPressed
        
-        
+          // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            pfSenha.requestFocus();
+        }      
     }//GEN-LAST:event_textUsuarioKeyPressed
+
+    private void pfSenhaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pfSenhaKeyPressed
+       
+          // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+           getRootPane().setDefaultButton(buttonEntrar);
+        String usuario = textUsuario.getText();
+        String senha = pfSenha.getText();
+        
+        // Faz a autenticação da senha do usuario admin //
+        if(usuario.equals("admin") && senha.equals("123")) {
+            JOptionPane.showMessageDialog(null, "Bem vindo ao Sistema.");
+            dispose();
+            TelaPrincipal tela = new TelaPrincipal();
+            tela.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuário ou senha não encontrados!");          
+        }
+        }  
+        
+    }//GEN-LAST:event_pfSenhaKeyPressed
 
     /**
      * @param args the command line arguments
@@ -206,14 +248,29 @@ public class TelaLogin extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        
+        try {
+            //here you can put the selected theme class name in JTattoo
+            UIManager.setLookAndFeel("com.jtattoo.plaf.mint.MintLookAndFeel");
+
+            } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new TelaLogin().setVisible(true);
             }
-        });
+        });             
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonEntrar;
@@ -225,4 +282,6 @@ public class TelaLogin extends javax.swing.JFrame {
     private javax.swing.JPasswordField pfSenha;
     private javax.swing.JTextField textUsuario;
     // End of variables declaration//GEN-END:variables
+
+
 }

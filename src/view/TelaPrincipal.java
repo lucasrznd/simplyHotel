@@ -1,14 +1,23 @@
-import java.time.Month;
-import java.time.Period;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+package view;
+
+import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.table.DefaultTableModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.SQLException;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -25,6 +34,28 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public TelaPrincipal() {
         initComponents();
         comboTQuarto.setSelectedItem(null);
+        
+        Image icon = new ImageIcon(this.getClass().getResource("/images/icone-simplyHotel.png")).getImage();
+        this.setIconImage(icon);
+    }
+    
+    // Metódo de Conexão //
+    public Connection getConnection() {
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");           
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        Connection con = null;
+        
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://localhost/cadastrohotel", "root", "1234");
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return con;   
     }
 
     /**
@@ -43,9 +74,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         labelEndereco = new javax.swing.JLabel();
         txtEndereco = new javax.swing.JTextField();
         labelCep = new javax.swing.JLabel();
-        txtCep = new javax.swing.JTextField();
+        txtCep = new javax.swing.JFormattedTextField();
         labelCelular = new javax.swing.JLabel();
-        txtCelular = new javax.swing.JTextField();
         labelEmail = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
         labelNacionalidade = new javax.swing.JLabel();
@@ -71,10 +101,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtDiaria = new javax.swing.JTextField();
         txtVTotal = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        buttonSalvar = new javax.swing.JButton();
         comboTQuarto = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         comboNumQuarto = new javax.swing.JComboBox<>();
-        labelValidar = new javax.swing.JLabel();
+        txtCelular = new javax.swing.JFormattedTextField();
+        jMenu = new javax.swing.JMenuBar();
+        jmCadastros = new javax.swing.JMenu();
+        jmHóspedes = new javax.swing.JMenuItem();
+        jmSair = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("simplyHotel - Tela de Cadastro");
@@ -90,6 +125,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 txtNomeActionPerformed(evt);
             }
         });
+        txtNome.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNomeKeyPressed(evt);
+            }
+        });
 
         labelSobrenome.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelSobrenome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/2.sobrenome.png"))); // NOI18N
@@ -100,38 +140,71 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 txtSobrenomeActionPerformed(evt);
             }
         });
+        txtSobrenome.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSobrenomeKeyPressed(evt);
+            }
+        });
 
         labelEndereco.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelEndereco.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/3.endereco.png"))); // NOI18N
         labelEndereco.setText("Endereço");
 
+        txtEndereco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEnderecoActionPerformed(evt);
+            }
+        });
+        txtEndereco.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEnderecoKeyPressed(evt);
+            }
+        });
+
         labelCep.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelCep.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/4.cep.png"))); // NOI18N
         labelCep.setText("CEP");
+
+        try {
+            txtCep.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("#####-###")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        txtCep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCepActionPerformed(evt);
+            }
+        });
+        txtCep.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCepKeyPressed(evt);
+            }
+        });
 
         labelCelular.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelCelular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/5.telefone.png"))); // NOI18N
         labelCelular.setText("Celular");
 
-        txtCelular.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCelularActionPerformed(evt);
-            }
-        });
-        txtCelular.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtCelularKeyPressed(evt);
-            }
-        });
-
         labelEmail.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelEmail.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/6.email.png"))); // NOI18N
         labelEmail.setText("E-mail");
+
+        txtEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEmailActionPerformed(evt);
+            }
+        });
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEmailKeyPressed(evt);
+            }
+        });
 
         labelNacionalidade.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelNacionalidade.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/7.nacionalidade.png"))); // NOI18N
         labelNacionalidade.setText("Nacionalidade");
 
+        txtNacionalidade.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "português (Brasil)", "tailandês (tailandês, Tailândia)", "turcomeno (latim, Turcomenistão)", "tigrínia (Etiópia)", "tâmil (Singapura)", "inglês (Niue)", "chinês (simplificado, Singapura)", "fula (Adlm, Libéria)", "inglês (Jamaica)", "sami setentrional (latim, Noruega)", "espanhol (Bolívia)", "dzonga (Butão)", "baixo sorábio (Alemanha)", "bósnio (Bósnia e Herzegovina)", "luxemburguês (latim, Luxemburgo)", "inglês (Libéria)", "árabe (Chade)", "nuer (latim, Sudão do Sul)", "fula (latim, Mauritânia)", "suaíli (Uganda)", "turcomeno (Turcomenistão)", "sérvio (cirílico, Montenegro)", "árabe (Egito)", "osseto (cirílico, Geórgia)", "iorubá (Nigéria)", "sami setentrional (Noruega)", "inglês (Palau)", "polonês (Polônia)", "sérvio (Sérvia e Montenegro)", "nepalês (Índia)", "aghem (latim, Camarões)", "árabe (Saara Ocidental)", "bósnio (latim, Bósnia e Herzegovina)", "baixo alemão (Alemanha)", "bokmål norueguês (Svalbard e Jan Mayen)", "espanhol (Estados Unidos)", "inglês (Estados Unidos, computador)", "português (Macau, RAE da China)", "luxemburguês (Luxemburgo)", "baixo sorábio (latim, Alemanha)", "islandês (latim, Islândia)", "somali (Quênia)", "armênio (armênio, Armênia)", "zarma (Níger)", "fula (latim, Gana)", "francês (São Pedro e Miquelão)", "árabe (Comores)", "norueguês (Noruega, Nynorsk)", "polonês (latim, Polônia)", "aghem (Camarões)", "guzerate (guzerate, Índia)", "turco (Turquia)", "groenlandês (latim, Groenlândia)", "árabe (Mauritânia)", "espanhol (República Dominicana)", "yrl (Brasil)", "groenlandês (Groenlândia)", "inglês (Nauru)", "baixo alemão (latim, Alemanha)", "quiniaruanda (latim, Ruanda)", "inglês (Austrália)", "inglês (Chipre)", "turco (latim, Turquia)", "tigrínia (Eritreia)", "nuer (Sudão do Sul)", "inglês (Ruanda)", "croata (latim, Croácia)", "lingala (Congo - Kinshasa)", "ngiemboon (Camarões)", "zarma (latim, Níger)", "árabe (Israel)", "oriá (Índia)", "pashto (árabe, Afeganistão)", "árabe (Síria)", "luo (latim, Quênia)", "bafia (Camarões)", "tártaro (Rússia)", "oromo (Quênia)", "francês (Vanuatu)", "inglês (Samoa Americana)", "chinês (Taiwan)", "sindi (Índia)", "ngiemboon (latim, Camarões)", "francês (Níger)", "português (Moçambique)", "friulano (latim, Itália)", "bena (latim, Tanzânia)", "asturiano (latim, Espanha)", "shambala (Tanzânia)", "birmanês (birmanês, Mianmar (Birmânia))", "inglês (Jersey)", "lingala (República Centro-Africana)", "uzbeque (Afeganistão)", "dinamarquês (latim, Dinamarca)", "inglês (Ilha Christmas)", "akan (latim, Gana)", "inglês (Áustria)", "cantonês (simplificado, China)", "yrl (Venezuela)", "canarim (Índia)", "inglês (Tanzânia)", "inglês (Porto Rico)", "francês (Nova Caledônia)", "gaélico escocês (Reino Unido)", "francês (Camarões)", "walser (latim, Suíça)", "pidgin nigeriano (latim, Nigéria)", "urdu (árabe, Paquistão)", "panjabi (gurmuqui, Índia)", "teso (Uganda)", "norueguês (latim, Noruega)", "bengali (bengali, Bangladesh)", "lapão de Inari (latim, Finlândia)", "inglês (Países Baixos)", "nepalês (devanágari, Nepal)", "lingala (República do Congo)", "azerbaijano (Azerbaijão)", "marati (Índia)", "grego (Chipre)", "curdo (Turquia)", "gusii (latim, Quênia)", "luri setentrional (Irã)", "alemão (Suíça) (França)", "espanhol (Honduras)", "fula (Senegal)", "húngaro (Hungria)", "albanês (Macedônia do Norte)", "búlgaro (cirílico, Bulgária)", "sérvio (cirílico, Bósnia e Herzegovina)", "somali (latim, Somália)", "estoniano (Estônia)", "árabe (Omã)", "frísio ocidental (Países Baixos)", "turco (Chipre)", "letão (latim, Letônia)", "uzbeque (latim, Uzbequistão)", "alemão (Itália)", "duala (Camarões)", "luri setentrional (Iraque)", "português (latim, Brasil)", "francês (Tunísia)", "sérvio (Sérvia)", "alemão (Suíça)", "francês (Polinésia Francesa)", "suaíli (latim, Tanzânia)", "português (Guiné Equatorial)", "vunjo (Tanzânia)", "machame (Tanzânia)", "malgaxe (latim, Madagascar)", "inglês (Tuvalu)", "inglês (Ilhas Pitcairn)", "luba-catanga (latim, Congo - Kinshasa)", "chinês (simplificado, Hong Kong, RAE da China)", "holandês (Países Baixos)", "inglês (Guiana)", "jola-fonyi (Senegal)", "holandês (Curaçao)", "árabe (Argélia)", "português (Suíça)", "francês (Guiné Equatorial)", "inglês (Nigéria)", "francês (Costa do Marfim)", "quicuio (Quênia)", "interlíngua (Mundo)", "inglês (Paquistão)", "chinês (China)", "inglês (Santa Lúcia)", "bodo (Índia)", "fula (Adlm, Burquina Faso)", "manx (Ilha de Man)", "bambara (latim, Mali)", "córnico (latim, Reino Unido)", "yangben (latim, Camarões)", "inglês (Trinidad e Tobago)", "macedônio (Macedônia do Norte)", "esloveno (Eslovênia)", "sango (latim, República Centro-Africana)", "finlandês (latim, Finlândia)", "xhosa (África do Sul)", "francês (Bélgica)", "nguemba (Camarões)", "fula (Adlm, Níger)", "espanhol (Venezuela)", "meru (Quênia)", "inglês (Bermudas)", "bokmål norueguês (Noruega)", "crioulo cabo-verdiano (Cabo Verde)", "kgp (latim, Brasil)", "vietnamita (Vietnã)", "inglês (Estados Unidos)", "morisyen (Maurício)", "francês (Burquina Faso)", "italiano (San Marino)", "persa (árabe, Irã)", "sânscrito (devanágari, Índia)", "francês (Mayotte)", "guzerate (Índia)", "fula (latim, Camarões)", "maltês (latim, Malta)", "finlandês (Finlândia)", "catalão (França)", "sérvio (latim, Bósnia e Herzegovina)", "chakma (cakm, Bangladesh)", "ucraniano (cirílico, Ucrânia)", "francês (Djibuti)", "fula (Adlm, Guiné-Bissau)", "hauçá (Gana)", "iídiche (hebraico, Mundo)", "africâner (latim, África do Sul)", "tigrínia (etiópico, Etiópia)", "tonganês (latim, Tonga)", "alemão (Bélgica)", "amárico (etiópico, Etiópia)", "fula (latim, Guiné-Bissau)", "chinês (Macau, RAE da China)", "mundang (latim, Camarões)", "nyankole (Uganda)", "tâmil (Sri Lanka)", "rundi (latim, Burundi)", "malaio (Malásia)", "alemão (latim, Alemanha)", "cebuano (Filipinas)", "tadjique (Tadjiquistão)", "vunjo (latim, Tanzânia)", "quíchua (Peru)", "espanhol (Equador)", "macedônio (cirílico, Macedônia do Norte)", "luganda (Uganda)", "fula (Adlm, Camarões)", "fula (latim, Níger)", "zulu (África do Sul)", "francês (latim, França)", "sundanês (latim, Indonésia)", "chiga (Uganda)", "kölsch (Alemanha)", "russo (Rússia)", "pidgin nigeriano (Nigéria)", "inglês (Dominica)", "hebraico (hebraico, Israel)", "irlandês (Irlanda)", "inglês (Burundi)", "cantonês (China)", "romanche (latim, Suíça)", "inglês (Samoa)", "francês (Luxemburgo)", "maori (Nova Zelândia)", "árabe (Eritreia)", "xona (Zimbábue)", "espanhol (Ceuta e Melilla)", "irlandês (Reino Unido)", "tailandês (Tailândia, TH, Algarismos tailandeses)", "francês (Seicheles)", "fula (latim, Nigéria)", "inglês (Serra Leoa)", "norueguês (Noruega)", "inglês (Santa Helena)", "fula (Adlm, Nigéria)", "chinês (tradicional, Macau, RAE da China)", "sindi (árabe, Paquistão)", "alemão (Luxemburgo)", "alemão (Alemanha)", "nynorsk norueguês (latim, Noruega)", "inglês (Dinamarca)", "somali (Djibuti)", "lituano (Lituânia)", "esperanto (Mundo)", "inglês (Ilhas Menores Distantes dos EUA)", "pashto (Paquistão)", "inglês (Eslovênia)", "vai (vai, Libéria)", "laosiano (Laos)", "rombo (latim, Tanzânia)", "árabe (Líbano)", "luri setentrional (árabe, Irã)", "africâner (África do Sul)", "fula (Guiné)", "kölsch (latim, Alemanha)", "caxemira (devanágari, Índia)", "espanhol (Belize)", "árabe (Emirados Árabes Unidos)", "esperanto (latim, Mundo)", "croata (Croácia)", "rombo (Tanzânia)", "caxemira (Índia)", "birmanês (Mianmar (Birmânia))", "urdu (Paquistão)", "mongol (Mongólia)", "dinamarquês (Dinamarca)", "inglês (Micronésia)", "inglês (Bélgica)", "francês (Wallis e Futuna)", "mazandarani (Irã)", "inglês (Singapura)", "kalenjin (Quênia)", "fula (latim, Gâmbia)", "tártaro (cirílico, Rússia)", "teso (latim, Uganda)", "yrl (Colômbia)", "asu (latim, Tanzânia)", "bena (Tanzânia)", "fula (latim, Guiné)", "inglês (Sudão)", "esloveno (latim, Eslovênia)", "maithili (devanágari, Índia)", "japonês (Japão, JP, Calendário Japonês)", "espanhol (El Salvador)", "manipuri (bengali, Índia)", "malaiala (Índia)", "irlandês (latim, Irlanda)", "inglês (Ilhas Malvinas)", "islandês (Islândia)", "basa (latim, Camarões)", "inglês (Diego Garcia)", "português (São Tomé e Príncipe)", "akan (Gana)", "uzbeque (árabe, Afeganistão)", "inglês (Suécia)", "chinês (simplificado, China)", "espanhol (América Latina)", "lingala (latim, Congo - Kinshasa)", "kako (latim, Camarões)", "alemão (Suíça) (Liechtenstein)", "gusii (Quênia)", "chakma (Bangladesh)", "espanhol (Ilhas Canárias)", "árabe (Tunísia)", "bambara (Mali)", "uigur (China)", "panjabi (Paquistão)", "córnico (Reino Unido)", "machame (latim, Tanzânia)", "quicuio (latim, Quênia)", "espanhol (Brasil)", "koyra chiini (Mali)", "inglês (Ilhas Salomão)", "tibetano (tibetano, China)", "quiniaruanda (Ruanda)", "cheroqui (Estados Unidos)", "árabe (Iraque)", "tachelhit (tifinagh, Marrocos)", "inglês (Alemanha)", "inglês (Finlândia)", "romeno (Moldávia)", "uzbeque (Uzbequistão)", "taita (Quênia)", "interlíngua (latim, Mundo)", "sakha (cirílico, Rússia)", "inglês (Seicheles)", "inglês (Uganda)", "inglês (Nova Zelândia)", "espanhol (Uruguai)", "massai (Quênia)", "manipuri (Índia)", "sango (República Centro-Africana)", "russo (Ucrânia)", "inglês (Fiji)", "alemão (Liechtenstein)", "inglês (Barbados)", "croata (Bósnia e Herzegovina)", "lapão de Inari (Finlândia)", "iorubá (latim, Nigéria)", "alemão (Áustria)", "luba-catanga (Congo - Kinshasa)", "árabe (Mundo)", "somali (Somália)", "letão (Letônia)", "árabe (Kuwait)", "sérvio (cirílico, Sérvia)", "inglês (Lesoto)", "inglês (Hong Kong, RAE da China)", "bodo (devanágari, Índia)", "checheno (Rússia)", "meru (latim, Quênia)", "georgiano (Geórgia)", "francês (Ruanda)", "suaíli (Tanzânia)", "malgaxe (Madagascar)", "osseto (Rússia)", "sérvio (latim, Sérvia)", "inglês (latim, Estados Unidos)", "tamazight do Atlas Central (latim, Marrocos)", "quirguiz (Quirguistão)", "holandês (latim, Países Baixos)", "curdo (latim, Turquia)", "morisyen (latim, Maurício)", "árabe (Jordânia)", "galego (latim, Espanha)", "quirguiz (cirílico, Quirguistão)", "francês (Argélia)", "amárico (Etiópia)", "tibetano (China)", "quíchua (Equador)", "georgiano (georgiano, Geórgia)", "inglês (Montserrat)", "concani (devanágari, Índia)", "inglês (Guernsey)", "maconde (latim, Tanzânia)", "santali (Índia)", "sueco (Suécia)", "sérvio (Montenegro)", "inglês (Zâmbia)", "francês (Mali)", "hauçá (Nigéria)", "árabe (Arábia Saudita)", "persa (Afeganistão)", "filipino (latim, Filipinas)", "oromo (latim, Etiópia)", "osseto (Geórgia)", "iídiche (Mundo)", "curdo central (árabe, Iraque)", "inglês (Malta)", "inglês (Gana)", "inglês (Israel)", "canarim (kannada, Índia)", "tamazight do Atlas Central (Marrocos)", "grego (grego, Grécia)", "koyraboro senni (Mali)", "rwa (latim, Tanzânia)", "lacota (Estados Unidos)", "vai (latim, Libéria)", "suaíli (Congo - Kinshasa)", "fula (Adlm, Mauritânia)", "italiano (Cidade do Vaticano)", "filipino (Filipinas)", "espanhol (Filipinas)", "espanhol (Espanha)", "espanhol (Colômbia)", "búlgaro (Bulgária)", "inglês (São Vicente e Granadinas)", "koyraboro senni (latim, Mali)", "alto sorábio (Alemanha)", "basco (latim, Espanha)", "sueco (latim, Suécia)", "inglês (Europa)", "árabe (Sudão)", "hauçá (Níger)", "inglês (São Cristóvão e Névis)", "romeno (Romênia)", "sérvio (latim, Montenegro)", "espanhol (Guatemala)", "fula (latim, Libéria)", "basa (Camarões)", "ndebele do norte (latim, Zimbábue)", "francês (Madagascar)", "espanhol (Chile)", "kamba (Quênia)", "persa (Irã)", "japonês (japonês, Japão)", "inglês (Macau, RAE da China)", "inglês (Belize)", "lacota (latim, Estados Unidos)", "albanês (Albânia)", "romeno (latim, Romênia)", "tasawaq (Níger)", "kwasio (Camarões)", "tâmil (tâmil, Índia)", "kabyle (latim, Argélia)", "inglês (Ilhas Marianas do Norte)", "inglês (Granada)", "sangu (latim, Tanzânia)", "inglês (Botsuana)", "kabyle (Argélia)", "hebraico (Israel)", "maconde (Tanzânia)", "tâmil (Malásia)", "híndi (latim, Índia)", "ndebele do norte (Zimbábue)", "sueco (Finlândia)", "luyia (latim, Quênia)", "inglês (Irlanda)", "cingalês (cingalês, Sri Lanka)", "chinês (Singapura)", "inglês (Quiribati)", "tasawaq (latim, Níger)", "oromo (Etiópia)", "laosiano (lao, Laos)", "albanês (latim, Albânia)", "japonês (Japão)", "kamba (latim, Quênia)", "coreano (coreano, Coreia do Sul)", "fula (Adlm, Gana)", "francês (São Martinho)", "malaio (Indonésia)", "sânscrito (Índia)", "cantonês (Hong Kong, RAE da China)", "inglês (Essuatíni)", "rwa (Tanzânia)", "feroês (latim, Ilhas Faroé)", "macua (Moçambique)", "espanhol (Peru)", "inglês (Reino Unido)", "chinês (tradicional, Hong Kong, RAE da China)", "santali (ol chiki, Índia)", "cazaque (Cazaquistão)", "espanhol (Panamá)", "árabe (Territórios palestinos)", "francês (Mônaco)", "urdu (Índia)", "checheno (cirílico, Rússia)", "alemão (Suíça) (Suíça)", "luyia (Quênia)", "kako (Camarões)", "espanhol (Guiné Equatorial)", "macua (latim, Moçambique)", "árabe (Iêmen)", "inglês (Sint Maarten)", "russo (Cazaquistão)", "coreano (Coreia do Norte)", "holandês (Suriname)", "inglês (Bahamas)", "bemba (latim, Zâmbia)", "kalenjin (latim, Quênia)", "chiga (latim, Uganda)", "holandês (Países Baixos Caribenhos)", "ewe (latim, Gana)", "fula (Adlm, Guiné)", "uzbeque (cirílico, Uzbequistão)", "híndi (devanágari, Índia)", "inglês (Quênia)", "asu (Tanzânia)", "sardo (Itália)", "francês (Senegal)", "francês (Marrocos)", "português (Luxemburgo)", "fula (Adlm, Gâmbia)", "francês (São Bartolomeu)", "meta’ (Camarões)", "kwasio (latim, Camarões)", "maithili (Índia)", "tadjique (cirílico, Tadjiquistão)", "coreano (Coreia do Sul)", "espanhol (México)", "zulu (latim, África do Sul)", "dogri (Índia)", "inglês (Sudão do Sul)", "tibetano (Índia)", "inglês (Madagascar)", "francês (Burundi)", "tachelhit (Marrocos)", "nama (latim, Namíbia)", "alto sorábio (latim, Alemanha)", "bretão (latim, França)", "bengali (Bangladesh)", "espanhol (latim, Espanha)", "inglês (África do Sul)", "galês (latim, Reino Unido)", "francês (França)", "panjabi (Índia)", "inglês (Ilhas Marshall)", "francês (Benin)", "vai (Libéria)", "javanês (latim, Indonésia)", "pashto (Afeganistão)", "sakha (Rússia)", "bósnio (cirílico, Bósnia e Herzegovina)", "xhosa (latim, África do Sul)", "taita (latim, Quênia)", "eslovaco (Eslováquia)", "koyra chiini (latim, Mali)", "mazandarani (árabe, Irã)", "mongol (cirílico, Mongólia)", "uolofe (Senegal)", "hauçá (latim, Nigéria)", "francês (Haiti)", "russo (cirílico, Rússia)", "télugo (Índia)", "massai (latim, Quênia)", "holandês (Sint Maarten)", "francês (República do Congo)", "manx (latim, Ilha de Man)", "maltês (Malta)", "malaiala (malaiala, Índia)", "malaio (latim, Malásia)", "baixo alemão (Países Baixos)", "tamazirte marroqino padrão (tifinagh, Marrocos)", "nyankole (latim, Uganda)", "inglês (Vanuatu)", "tonganês (Tonga)", "fula (latim, Serra Leoa)", "sena (Moçambique)", "lusoga (latim, Uganda)", "fula (Adlm, Senegal)", "vietnamita (latim, Vietnã)", "sundanês (Indonésia)", "sichuan yi (China)", "nguemba (latim, Camarões)", "panjabi (árabe, Paquistão)", "francês (Reunião)", "bengali (Índia)", "francês (Guadalupe)", "tamazirte marroqino padrão (Marrocos)", "ucraniano (Ucrânia)", "luganda (latim, Uganda)", "inglês (Ilha Norfolk)", "francês (Suíça)", "cebuano (latim, Filipinas)", "sérvio (cirílico, Kosovo)", "bokmål norueguês (latim, Noruega)", "árabe (Sudão do Sul)", "inglês (Guam)", "holandês (Aruba)", "inglês (Anguila)", "frísio ocidental (latim, Países Baixos)", "inglês (Camarões)", "lusoga (Uganda)", "tcheco (Tchéquia)", "catalão (Espanha)", "húngaro (latim, Hungria)", "romanche (Suíça)", "russo (Moldávia)", "inglês (Tonga)", "fula (latim, Senegal)", "fula (Adlm, Serra Leoa)", "inglês (Papua-Nova Guiné)", "estoniano (latim, Estônia)", "francês (República Centro-Africana)", "português (Timor-Leste)", "inglês (Eritreia)", "sérvio (Bósnia e Herzegovina)", "espanhol (Paraguai)", "concani (Índia)", "bielorrusso (cirílico, Bielorrússia)", "francês (Togo)", "dzonga (tibetano, Butão)", "sérvio (latim, Kosovo)", "inglês (Filipinas)", "igbo (Nigéria)", "francês (Guiné)", "gaélico escocês (latim, Reino Unido)", "chinês (simplificado, Macau, RAE da China)", "sami setentrional (Finlândia)", "inglês (Ilhas Cook)", "árabe (Marrocos)", "havaiano (latim, Estados Unidos)", "inglês (Antígua e Barbuda)", "francês (Chade)", "lituano (latim, Lituânia)", "embu (Quênia)", "bemba (Zâmbia)", "ewondo (latim, Camarões)", "ewondo (Camarões)", "francês (Congo - Kinshasa)", "rundi (Burundi)", "inglês (Namíbia)", "meta’ (latim, Camarões)", "catalão (Itália)", "langi (Tanzânia)", "quíchua (latim, Peru)", "indonésio (Indonésia)", "teso (Quênia)", "catalão (Andorra)", "quíchua (Bolívia)", "havaiano (Estados Unidos)", "francês (Canadá)", "crioulo cabo-verdiano (latim, Cabo Verde)", "albanês (Kosovo)", "maori (latim, Nova Zelândia)", "inglês (Ilhas Cayman)", "italiano (Suíça)", "cingalês (Sri Lanka)", "luo (Quênia)", "inglês (Emirados Árabes Unidos)", "italiano (Itália)", "árabe (Somália)", "inglês (Zimbábue)", "francês (Maurício)", "nynorsk norueguês (Noruega)", "sami setentrional (Suécia)", "inglês (Tokelau)", "mundang (Camarões)", "kgp (Brasil)", "samburu (Quênia)", "português (Guiné-Bissau)", "xona (latim, Zimbábue)", "malaio (Singapura)", "ewe (Togo)", "lingala (Angola)", "bielorrusso (Bielorrússia)", "khmer (khmer, Camboja)", "italiano (latim, Itália)", "português (Cabo Verde)", "espanhol (Porto Rico)", "walser (Suíça)", "russo (Bielorrússia)", "feroês (Dinamarca)", "ewe (Gana)", "árabe (Barein)", "cazaque (cirílico, Cazaquistão)", "uigur (árabe, China)", "híndi (Índia)", "inglês (Suíça)", "sardo (latim, Itália)", "samburu (latim, Quênia)", "iorubá (Benin)", "feroês (Ilhas Faroé)", "francês (Comores)", "asturiano (Espanha)", "francês (Martinica)", "espanhol (Argentina)", "dogri (devanágari, Índia)", "inglês (Malásia)", "sangu (Tanzânia)", "embu (latim, Quênia)", "cantonês (tradicional, Hong Kong, RAE da China)", "armênio (Armênia)", "inglês (Gâmbia)", "shambala (latim, Tanzânia)", "nepalês (Nepal)", "yrl (latim, Brasil)", "tâmil (Índia)", "friulano (Itália)", "francês (Guiana Francesa)", "indonésio (latim, Indonésia)", "télugo (télugo, Índia)", "português (Angola)", "inglês (Mundo)", "duala (latim, Camarões)", "javanês (Indonésia)", "langi (latim, Tanzânia)", "francês (Mauritânia)", "russo (Quirguistão)", "bafia (latim, Camarões)", "fula (latim, Burquina Faso)", "chinês (tradicional, Taiwan)", "assamês (Índia)", "chinês (Hong Kong, RAE da China)", "suaíli (Quênia)", "tailandês (Tailândia)", "assamês (bengali, Índia)", "nama (Namíbia)", "inglês (Malaui)", "inglês (Território Britânico do Oceano Índico)", "árabe (Catar)", "inglês (Ilhas Cocos (Keeling))", "árabe (árabe, Egito)", "português (Portugal)", "eslovaco (latim, Eslováquia)", "azerbaijano (cirílico, Azerbaijão)", "curdo central (Iraque)", "tachelhit (latim, Marrocos)", "espanhol (Cuba)", "inglês (Ilhas Virgens Americanas)", "basco (Espanha)", "igbo (latim, Nigéria)", "yangben (Camarões)", "grego (Grécia)", "dinamarquês (Groenlândia)", "khmer (Camboja)", "curdo central (Irã)", "caxemira (árabe, Índia)", "catalão (Espanha, valenciano)", "uolofe (latim, Senegal)", "sindi (devanágari, Índia)", "marati (devanágari, Índia)", "espanhol (Costa Rica)", "francês (Gabão)", "árabe (Líbia)", "inglês (Maurício)", "galego (Espanha)", "inglês (Ilha de Man)", "azerbaijano (latim, Azerbaijão)", "alemão (Suíça) (latim, Suíça)", "sena (latim, Moçambique)", "inglês (Gibraltar)", "cheroqui (cherokee, Estados Unidos)", "inglês (Canadá)", "francês (Síria)", "somali (Etiópia)", "oriá (oriá, Índia)", "catalão (latim, Espanha)", "holandês (Bélgica)", "árabe (Djibuti)", "inglês (Ilhas Virgens Britânicas)", "galês (Reino Unido)", "jola-fonyi (latim, Senegal)", "inglês (Ilhas Turcas e Caicos)", "inglês (Maldivas)", "sueco (Ilhas Aland)", "tcheco (latim, Tchéquia)", "africâner (Namíbia)", "inglês (Índia)", "espanhol (Nicarágua)", "sichuan yi (yi, China)", "sindi (Paquistão)", "massai (Tanzânia)", "malaio (Brunei)", "bretão (França)", "chakma (Índia)" }));
         txtNacionalidade.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNacionalidadeActionPerformed(evt);
@@ -145,6 +218,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtCheckin.setDateFormatString("dd/MM/yyyy");
 
         txtDataN.setDateFormatString("dd/MM/yyyy");
+        txtDataN.setMaxSelectableDate(null);
+        txtDataN.setMinSelectableDate(null);
+        txtDataN.setNextFocusableComponent(txtGenero);
 
         labelDataN.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         labelDataN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/11.checkout.png"))); // NOI18N
@@ -161,11 +237,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "Sobrenome", "Endereço ", "CEP", "Celular", "E-mail", "Nacionalidade", "Data de Nascimento", "Gênero", "Check-In", "Check-Out", "Tipo de Quarto", "Num. Quarto", "Valor Total R$"
+                "Nome", "Sobrenome", "Endereço ", "CEP", "Celular", "E-mail", "Nacionalidade", "Data de Nascimento", "Gênero", "Check-In", "Check-Out", "Tipo de Quarto", "Num. Quarto", "Valor Diaria", "Valor Total R$"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -225,6 +301,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        txtDiaria.setEditable(false);
         txtDiaria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtDiariaActionPerformed(evt);
@@ -241,25 +318,36 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 9)); // NOI18N
         jLabel2.setText("© simplyHotel - Todos os direitos reservados");
 
+        buttonSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/salvar.png"))); // NOI18N
+        buttonSalvar.setText("Salvar");
+        buttonSalvar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSalvarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelDiaria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelDiaria, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                     .addComponent(labelVTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(85, 85, 85)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtDiaria, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtVTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(55, 55, 55)
-                .addComponent(buttonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(90, 90, 90)
-                .addComponent(buttonLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(90, 90, 90)
-                .addComponent(buttonSair, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(60, 60, 60)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtDiaria, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                    .addComponent(txtVTotal))
+                .addGap(80, 80, 80)
+                .addComponent(buttonCalcular)
+                .addGap(50, 50, 50)
+                .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50)
+                .addComponent(buttonLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50)
+                .addComponent(buttonSair, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -279,9 +367,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(labelVTotal)
                             .addComponent(txtVTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)))
-                    .addComponent(buttonSair, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonLimpar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonCalcular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(buttonLimpar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonSair, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonCalcular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(3, 3, 3)
                 .addComponent(jLabel2)
                 .addContainerGap())
@@ -294,11 +383,52 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\LucasPC\\Desktop\\Imagens\\capa.png")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/capa1.png"))); // NOI18N
 
-        labelValidar.setFont(new java.awt.Font("Segoe UI", 0, 9)); // NOI18N
-        labelValidar.setForeground(new java.awt.Color(204, 0, 0));
-        labelValidar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        try {
+            txtCelular.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##) # ####-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        txtCelular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCelularActionPerformed(evt);
+            }
+        });
+        txtCelular.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCelularKeyPressed(evt);
+            }
+        });
+
+        jmCadastros.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cadastros-icon.png"))); // NOI18N
+        jmCadastros.setText("Cadastros   |");
+        jmCadastros.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        jmHóspedes.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jmHóspedes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/hospedes-icon.png"))); // NOI18N
+        jmHóspedes.setText("Hóspedes");
+        jmHóspedes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jmHóspedes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmHóspedesActionPerformed(evt);
+            }
+        });
+        jmCadastros.add(jmHóspedes);
+
+        jMenu.add(jmCadastros);
+
+        jmSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/sair-icon.png"))); // NOI18N
+        jmSair.setText("Sair");
+        jmSair.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jmSair.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmSairMouseClicked(evt);
+            }
+        });
+        jMenu.add(jmSair);
+
+        setJMenuBar(jMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -307,7 +437,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelNumeroQuarto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelTipoQuarto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelCheckout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -319,26 +448,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(labelCep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelSobrenome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(55, 55, 55)
+                    .addComponent(labelNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelNumeroQuarto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(60, 60, 60)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelValidar, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtCelular)
-                            .addComponent(txtCep)
-                            .addComponent(txtNome)
-                            .addComponent(txtSobrenome)
-                            .addComponent(txtEndereco)
-                            .addComponent(txtEmail)
-                            .addComponent(txtNacionalidade, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                            .addComponent(txtDataN, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                            .addComponent(txtGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(txtCheckout, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                        .addComponent(comboTQuarto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(comboNumQuarto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(55, 55, 55)
+                    .addComponent(txtNome)
+                    .addComponent(txtSobrenome)
+                    .addComponent(txtEndereco)
+                    .addComponent(txtEmail)
+                    .addComponent(txtCheckout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboTQuarto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboNumQuarto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtCep)
+                    .addComponent(txtCelular)
+                    .addComponent(txtCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtNacionalidade, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDataN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(80, 80, 80)
                 .addComponent(jScrollPane1))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
@@ -360,8 +487,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(labelEndereco)
                                 .addGap(18, 18, 18)
-                                .addComponent(labelCep)
-                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(labelCep)
+                                    .addComponent(txtCep, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(labelCelular)
                                     .addComponent(txtCelular, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -370,12 +499,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(txtSobrenome, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtCep, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelValidar, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(labelEmail)
                             .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -421,10 +546,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCalcularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCalcularActionPerformed
-        
-        
-        // Faz o Cálculo do Dia do Check-In e Check-out e dá o Valor Total //
-        
+                
+        // Faz o Cálculo do Dia do Check-In e Check-out e dá o Valor Total //      
          try {  
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                         Date firstDate = txtCheckin.getDate();
@@ -445,13 +568,18 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
                
 
+        // Pede o preenchimento de todos os dados para o usuário //
         if(txtNome.getText().equals("") || txtSobrenome.getText().equals("") || txtEndereco.getText().equals("") 
-        || txtCep.getText().equals("") || txtCelular.getText().equals("") || txtEmail.getText().equals("") 
-        || txtNacionalidade.getSelectedItem().equals(null) || txtDiaria.getText().equals("") || txtVTotal.getText().equals("")) {
-        JOptionPane.showMessageDialog(this, "Por favor preencha todos os dados.");
-         } else {
+        || txtCep.getText().equals("") || txtCelular.getText().equals("") || txtEmail.getText().equals("") ||
+           txtDataN.getDate().equals(null) ||  txtCheckin.getDate().equals(null) || txtCheckout.getDate().equals(null) ||
+           comboNumQuarto.getSelectedItem().equals(null) || comboTQuarto.getSelectedItem().equals(null) ||
+           txtDiaria.getText().equals("") || txtVTotal.getText().equals("")){
+            JOptionPane.showMessageDialog(this, "Por favor preencha todos os dados.");
+         } 
+        
+        else {
          
-        // Preenche na tabela com os campos digitados //
+        // Preenche a tabela com os campos digitados //
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[] {    
         txtNome.getText(),
@@ -467,11 +595,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtCheckout.getDate(),
         comboTQuarto.getSelectedItem(),
         comboNumQuarto.getSelectedItem(),
+        txtDiaria.getText(),
         txtVTotal.getText() });
         
         }
     }//GEN-LAST:event_buttonCalcularActionPerformed
-
+    
     
     private JFrame frame;
     private void buttonSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSairActionPerformed
@@ -479,7 +608,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         // Cria a ação do botão sair //
         frame = new JFrame("Sair");
         
-        if(JOptionPane.showConfirmDialog(frame, "Você realmente quer sair?", "Simply Hotel", 
+        if(JOptionPane.showConfirmDialog(frame, "Realmente deseja sair?", "Simply Hotel", 
                 JOptionPane.YES_OPTION) == JOptionPane.YES_NO_OPTION) {
         System.exit(0);
     }
@@ -488,6 +617,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void buttonLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLimparActionPerformed
        
+        // Pede a autenticação do usuário para limpar a tabela | Se a senha for correta ele executa o reset //
+        JPasswordField pf = new JPasswordField();
+        int pedirSenha = JOptionPane.showConfirmDialog(null, pf, "Digite a senha", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        String password = new String(pf.getPassword());
+        if (pedirSenha == JOptionPane.OK_OPTION && password.equals("123")) {
+                
         // Reseta todos os dados dos text's Fields e tabelas //
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
@@ -508,10 +643,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtDiaria.setText(null);
         txtVTotal.setText(null);
         
+        // Se a senha estiver incorreta, ele mostra a mensagem de erro //
+        } else {
+            JOptionPane.showMessageDialog(null, "Senha inválida!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_buttonLimparActionPerformed
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
-        
+           
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void txtSobrenomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSobrenomeActionPerformed
@@ -524,11 +663,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void txtDiariaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiariaActionPerformed
 
+        
     }//GEN-LAST:event_txtDiariaActionPerformed
 
     private void comboTQuartoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTQuartoActionPerformed
-       
-        
+                  
         // Cria as opções de Número de Quarto quando o usuário escolher o Tipo //
         try {
         
@@ -582,20 +721,141 @@ public class TelaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtVTotalActionPerformed
 
-    private void txtCelularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCelularActionPerformed
+    private void txtCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCepActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCepActionPerformed
 
+    private void txtCelularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCelularActionPerformed
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtCelularActionPerformed
+
+    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEmailActionPerformed
+
+    private void txtNomeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNomeKeyPressed
+       
+        // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            txtSobrenome.requestFocus();
+        }      
+    }//GEN-LAST:event_txtNomeKeyPressed
+
+    private void txtSobrenomeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSobrenomeKeyPressed
+        
+        // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            txtEndereco.requestFocus();
+        }      
+    }//GEN-LAST:event_txtSobrenomeKeyPressed
+
+    private void txtEnderecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEnderecoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEnderecoActionPerformed
+
+    private void txtCepKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCepKeyPressed
+        
+        // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            txtCelular.requestFocus();
+        }
+    }//GEN-LAST:event_txtCepKeyPressed
 
     private void txtCelularKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCelularKeyPressed
         
-        try {
-            int ncelular = Integer.parseInt(txtCelular.getText());
-            labelValidar.setText("");
-        } catch(NumberFormatException e) {
-            labelValidar.setText("Número inválido");
+        // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            txtEmail.requestFocus();
         }
-        
     }//GEN-LAST:event_txtCelularKeyPressed
+
+    private void txtEmailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEmailKeyPressed
+  
+        // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            txtNacionalidade.requestFocus();
+        }
+    }//GEN-LAST:event_txtEmailKeyPressed
+
+    private void txtEnderecoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnderecoKeyPressed
+        
+        // Código para trocar entre os TextFields quando preenchido e pressionado a tecla ENTER //
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            txtCep.requestFocus();
+        }
+    }//GEN-LAST:event_txtEnderecoKeyPressed
+
+    private void buttonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSalvarActionPerformed
+       
+                // Cria a conexão com o BD //
+                Connection con = getConnection();
+                Statement st = null;
+
+                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+            try {
+                st = con.createStatement();
+
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    String nome = model.getValueAt(i, 0).toString();
+                    String sobrenome = model.getValueAt(i, 1).toString();
+                    String endereco = model.getValueAt(i, 2).toString();
+                    String cep = model.getValueAt(i, 3).toString();
+                    String celular = model.getValueAt(i, 4).toString();
+                    String email = model.getValueAt(i, 5).toString();
+                    String nacionalidade = model.getValueAt(i, 6).toString();
+                    
+                    SimpleDateFormat sdfNasc = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataNas = sdfNasc.format(txtDataN.getDate());
+                    st.setCursorName(dataNas);                   
+                    String genero = model.getValueAt(i, 8).toString();
+                    
+                    SimpleDateFormat sdfCheckin = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataCheckin = sdfCheckin.format(txtCheckin.getDate());
+                    st.setCursorName(dataCheckin);                   
+                    
+                    SimpleDateFormat sdfCheckout = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataCheckout = sdfCheckout.format(txtCheckout.getDate());
+                    st.setCursorName(dataCheckout);                                      
+                    String tipoQuarto = model.getValueAt(i, 11).toString();
+                    String numQuarto = model.getValueAt(i, 12).toString();
+                    String valorDiaria = model.getValueAt(i, 13).toString();
+                    String valorTotal = model.getValueAt(i, 14).toString();
+
+                    String sqlQuery = "INSERT INTO `hospedes`(`nome`, `sobrenome`, `endereco`, `cep`, `celular`, `email`, `nacionalidade`, `dataNas`, "
+                            + "`genero`, `dataCheckin`, `dataCheckout`, `tipoQuarto`, `numQuarto`,`valorDiaria`, `valorTotal`) " + "VALUES ('"+nome+"','"+sobrenome+"',"
+                            + "'"+endereco+"','"+cep+"','"+celular+"','"+email+"','"+nacionalidade+"','"+dataNas+"','"+genero+"',"
+                            + "'"+dataCheckin+"','"+dataCheckout+"','"+tipoQuarto+"','"+numQuarto+"','"+valorDiaria+"','"+valorTotal+"')";
+
+                    st.addBatch(sqlQuery);
+                }
+
+                int[] rowsInsered = st.executeBatch();
+                JOptionPane.showMessageDialog(this, "Dados inseridos com sucesso.");
+                System.out.println("Dados inseridos");
+                System.out.println("Contador de linhas: " + rowsInsered.length);
+
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Os dados não podem ser enviados.", "Error", JOptionPane.ERROR_MESSAGE);
+                Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, "Erro", ex);
+            }
+    }//GEN-LAST:event_buttonSalvarActionPerformed
+
+    private void jmHóspedesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmHóspedesActionPerformed
+        
+        new TelaCadastros().setVisible(true);
+    }//GEN-LAST:event_jmHóspedesActionPerformed
+
+    private void jmSairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmSairMouseClicked
+        
+        // Cria a ação do quando clicado para sair //
+        frame = new JFrame("Sair");
+        
+        if(JOptionPane.showConfirmDialog(frame, "Realmente deseja sair?", "Simply Hotel", 
+                JOptionPane.YES_OPTION) == JOptionPane.YES_NO_OPTION) {
+        System.exit(0);
+    }
+    }//GEN-LAST:event_jmSairMouseClicked
 
     /**
      * @param args the command line arguments
@@ -623,6 +883,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        try {
+            //here you can put the selected theme class name in JTattoo
+            UIManager.setLookAndFeel("com.jtattoo.plaf.mint.MintLookAndFeel");
+
+            } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -636,13 +910,18 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonCalcular;
     private javax.swing.JButton buttonLimpar;
     private javax.swing.JButton buttonSair;
+    private javax.swing.JButton buttonSalvar;
     private javax.swing.JComboBox<String> comboNumQuarto;
     private javax.swing.JComboBox<String> comboTQuarto;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenuBar jMenu;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JMenu jmCadastros;
+    private javax.swing.JMenuItem jmHóspedes;
+    private javax.swing.JMenu jmSair;
     private javax.swing.JLabel labelCelular;
     private javax.swing.JLabel labelCep;
     private javax.swing.JLabel labelCheckin;
@@ -658,9 +937,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel labelSobrenome;
     private javax.swing.JLabel labelTipoQuarto;
     private javax.swing.JLabel labelVTotal;
-    private javax.swing.JLabel labelValidar;
-    private javax.swing.JTextField txtCelular;
-    private javax.swing.JTextField txtCep;
+    private javax.swing.JFormattedTextField txtCelular;
+    private javax.swing.JFormattedTextField txtCep;
     private com.toedter.calendar.JDateChooser txtCheckin;
     private com.toedter.calendar.JDateChooser txtCheckout;
     private com.toedter.calendar.JDateChooser txtDataN;
